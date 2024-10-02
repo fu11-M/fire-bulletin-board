@@ -60,26 +60,3 @@
             text-align: center;
         }
     </style>
-</head>
-<body>
-<div class="container">
-    <h1>소방 안전 시스템 대시보드</h1>
-
-    <!-- 구역 목록 -->
-    <div class="zone-container">
-        <!-- 구역 데이터 반복 -->
-        <div th:each="zone : ${zones}" class="zone-card">
-            <h2 th:text="${zone.zoneName} + ' (' + zone.currentOccupancy + '명)'"></h2>
-
-            <ul>
-                <!-- 각 구역의 사람들 정보 -->
-                <li th:each="person : ${zone.people}" th:text="${person.name} + ' (' + person.role + ')'"></li>
-            </ul>
-
-            <!-- 현재 구역에 인원이 없을 경우 -->
-            <p th:if="${zone.people.size() == 0}" class="no-data">현재 인원 없음</p>
-        </div>
-    </div>
-</div>
-</body>
-</html>
