@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>소방 안전 시스템 대시보드</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .container {
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ecf0f1;
+        }
+        .zone-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+        .zone-card {
+            width: 250px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #34495e;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s;
+        }
+        .zone-card:hover {
+            transform: translateY(-10px);
+        }
+        .zone-card h2 {
+            font-size: 22px;
+            color: #ecf0f1;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .zone-card ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .zone-card ul li {
+            background-color: #2c3e50;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: #bdc3c7;
+        }
+        .no-data {
+            color: #7f8c8d;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>소방 안전 시스템 대시보드</h1>
+
+    <!-- 구역 목록 -->
+    <div class="zone-container">
+        <!-- 구역 데이터 반복 -->
+        <div th:each="zone : ${zones}" class="zone-card">
+            <h2 th:text="${zone.zoneName} + ' (' + zone.currentOccupancy + '명)'"></h2>
+
+            <ul>
+                <!-- 각 구역의 사람들 정보 -->
+                <li th:each="person : ${zone.people}" th:text="${person.name} + ' (' + person.role + ')'"></li>
+            </ul>
+
+            <!-- 현재 구역에 인원이 없을 경우 -->
+            <p th:if="${zone.people.size() == 0}" class="no-data">현재 인원 없음</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

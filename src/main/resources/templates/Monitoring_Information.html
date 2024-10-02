@@ -1,0 +1,358 @@
+<!--한글 버전-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>모니터링 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000; /* 배경을 검은색으로 변경 */
+            margin: 0;
+            padding: 0;
+            color: #f9f9f9; /* 텍스트 색상을 밝은 회색으로 설정 */
+        }
+        h1 {
+            text-align: center;
+            color: #ff6600;
+            margin: 20px 0;
+        }
+        .section {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #1a1a1a; /* 섹션 배경을 어두운 회색으로 설정 */
+            max-width: 90%;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* 흰색 그림자 */
+        }
+        .section h2 {
+            color: #ff6600;
+            font-size: 1.5em;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #333; /* 테이블 헤더를 어두운 회색으로 설정 */
+            color: white;
+            font-weight: bold;
+        }
+        td {
+            background-color: #262626; /* 테이블 셀 배경을 더 어두운 회색으로 설정 */
+        }
+        tr:nth-child(even) td {
+            background-color: #1a1a1a; /* 짝수 행은 더 어두운 배경으로 설정 */
+        }
+        tr:hover td {
+            background-color: #ff6600; /* 마우스 오버 시 주황색으로 강조 */
+            color: #000; /* 마우스 오버 시 텍스트를 검은색으로 설정 */
+        }
+    </style>
+</head>
+<body>
+
+<h1>모니터링 정보</h1>
+
+<div class="section">
+    <h2>구역 정보</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>구역 이름</th>
+            <th>현재 인원</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="zone : ${zones}">
+            <td th:text="${zone.zone_name}">구역 이름</td>
+            <td th:text="${zone.current_occupancy}">현재 인원</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>CCTV 추적 로그</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>사용자 ID</th>
+            <th>구역</th>
+            <th>시간</th>
+            <th>이동 경로</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log : ${trackingLogs}">
+            <td th:text="${log.user.user_id}">사용자 ID</td>
+            <td th:text="${log.zone.zone_name}">구역</td>
+            <td th:text="${log.timestamp}">시간</td>
+            <td th:text="${log.movement_path}">이동 경로</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>출입 로그</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>사용자 ID</th>
+            <th>구역</th>
+            <th>입장 시간</th>
+            <th>퇴장 시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log : ${entryLogs}">
+            <td th:text="${log.user.user_id}">사용자 ID</td>
+            <td th:text="${log.zone.zone_name}">구역</td>
+            <td th:text="${log.entry_time}">입장 시간</td>
+            <td th:text="${log.exit_time}">퇴장 시간</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="section">
+    <h2>IR 센서 로그</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>센서 로그 ID</th>
+            <th>입장 인원</th>
+            <th>퇴장 인원</th>
+            <th>현재 인원</th>
+            <th>시간</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="log : ${sensorLogs}">
+            <td th:text="${log.sensor_log_id}">센서 로그 ID</td>
+            <td th:text="${log.count_in}">입장 인원</td>
+            <td th:text="${log.count_out}">퇴장 인원</td>
+            <td th:text="${log.current_count}">현재 인원</td>
+            <td th:text="${log.timestamp}">시간</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- 사용자 정보 섹션 추가 -->
+<div class="section">
+    <h2>사용자 정보</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>사용자 ID</th>
+            <th>이름</th>
+            <th>역할</th>
+            <th>등록일</th>
+            <th>삭제일</th>
+            <th>전화번호</th>
+            <th>부서</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.user_id}">사용자 ID</td>
+            <td th:text="${user.name}">이름</td>
+            <td th:text="${user.role != null ? user.role : '정보 없음'}">역할</td>
+            <td th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">등록일</td>
+            <td th:text="${user.deletedAt != null ? #temporals.format(user.deletedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">삭제일</td>
+            <td th:text="${user.phone != null ? user.phone : 'N/A'}">전화번호</td>
+            <td th:text="${user.department != null ? user.department : 'N/A'}">부서</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+<!--영어 버전-->
+<!--<!DOCTYPE html>-->
+<!--<html xmlns:th="http://www.thymeleaf.org">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Dashboard</title>-->
+<!--    <style>-->
+<!--        body {-->
+<!--            font-family: Arial, sans-serif;-->
+<!--            background-color: #000; /* 배경을 검은색으로 변경 */-->
+<!--            margin: 0;-->
+<!--            padding: 0;-->
+<!--            color: #f9f9f9; /* 텍스트 색상을 밝은 회색으로 설정 */-->
+<!--        }-->
+<!--        h1 {-->
+<!--            text-align: center;-->
+<!--            color: #ff6600;-->
+<!--            margin: 20px 0;-->
+<!--        }-->
+<!--        .section {-->
+<!--            margin: 20px auto;-->
+<!--            padding: 20px;-->
+<!--            border: 1px solid #ccc;-->
+<!--            border-radius: 10px;-->
+<!--            background-color: #1a1a1a; /* 섹션 배경을 어두운 회색으로 설정 */-->
+<!--            max-width: 90%;-->
+<!--            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); /* 흰색 그림자 */-->
+<!--        }-->
+<!--        .section h2 {-->
+<!--            color: #ff6600;-->
+<!--            font-size: 1.5em;-->
+<!--            text-align: center;-->
+<!--            margin-bottom: 20px;-->
+<!--        }-->
+<!--        table {-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--        }-->
+<!--        th, td {-->
+<!--            padding: 12px;-->
+<!--            text-align: left;-->
+<!--        }-->
+<!--        th {-->
+<!--            background-color: #333; /* 테이블 헤더를 어두운 회색으로 설정 */-->
+<!--            color: white;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+<!--        td {-->
+<!--            background-color: #262626; /* 테이블 셀 배경을 더 어두운 회색으로 설정 */-->
+<!--        }-->
+<!--        tr:nth-child(even) td {-->
+<!--            background-color: #1a1a1a; /* 짝수 행은 더 어두운 배경으로 설정 */-->
+<!--        }-->
+<!--        tr:hover td {-->
+<!--            background-color: #ff6600; /* 마우스 오버 시 주황색으로 강조 */-->
+<!--            color: #000; /* 마우스 오버 시 텍스트를 검은색으로 설정 */-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h1>Building Monitoring Dashboard</h1>-->
+
+<!--<div class="section">-->
+<!--    <h2>Zones Information</h2>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Zone Name</th>-->
+<!--            <th>Current Occupancy</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="zone : ${zones}">-->
+<!--            <td th:text="${zone.zone_name}">Zone Name</td>-->
+<!--            <td th:text="${zone.current_occupancy}">Current Occupancy</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<div class="section">-->
+<!--    <h2>CCTV Tracking Logs</h2>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>User ID</th>-->
+<!--            <th>Zone</th>-->
+<!--            <th>Timestamp</th>-->
+<!--            <th>Movement Path</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="log : ${trackingLogs}">-->
+<!--            <td th:text="${log.user.user_id}">User ID</td>-->
+<!--            <td th:text="${log.zone.zone_name}">Zone</td>-->
+<!--            <td th:text="${log.timestamp}">Timestamp</td>-->
+<!--            <td th:text="${log.movement_path}">Movement Path</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<div class="section">-->
+<!--    <h2>Entry Logs</h2>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>User ID</th>-->
+<!--            <th>Zone</th>-->
+<!--            <th>Entry Time</th>-->
+<!--            <th>Exit Time</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="log : ${entryLogs}">-->
+<!--            <td th:text="${log.user.user_id}">User ID</td>-->
+<!--            <td th:text="${log.zone.zone_name}">Zone</td>-->
+<!--            <td th:text="${log.entry_time}">Entry Time</td>-->
+<!--            <td th:text="${log.exit_time}">Exit Time</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<div class="section">-->
+<!--    <h2>IR Sensor Logs</h2>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Sensor Log ID</th>-->
+<!--            <th>Count In</th>-->
+<!--            <th>Count Out</th>-->
+<!--            <th>Current Count</th>-->
+<!--            <th>Timestamp</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="log : ${sensorLogs}">-->
+<!--            <td th:text="${log.sensor_log_id}">Sensor Log ID</td>-->
+<!--            <td th:text="${log.count_in}">Count In</td>-->
+<!--            <td th:text="${log.count_out}">Count Out</td>-->
+<!--            <td th:text="${log.current_count}">Current Count</td>-->
+<!--            <td th:text="${log.timestamp}">Timestamp</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--&lt;!&ndash; Users Information Section 추가 &ndash;&gt;-->
+<!--<div class="section">-->
+<!--    <h2>Users Information</h2>-->
+<!--    <table>-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>User ID</th>-->
+<!--            <th>Name</th>-->
+<!--            <th>Role</th>-->
+<!--            <th>Created At</th>-->
+<!--            <th>Deleted At</th>-->
+<!--            <th>Phone</th>-->
+<!--            <th>Department</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+<!--        <tr th:each="user : ${users}">-->
+<!--            <td th:text="${user.user_id}">User ID</td>-->
+<!--            <td th:text="${user.name}">Name</td>-->
+<!--            <td th:text="${user.role != null ? user.role : 'Guest Info Not Available'}">Role</td>-->
+<!--            <td th:text="${user.createdAt != null ? #temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">Created At</td>-->
+<!--            <td th:text="${user.deletedAt != null ? #temporals.format(user.deletedAt, 'yyyy-MM-dd HH:mm') : 'N/A'}">Deleted At</td>-->
+<!--            <td th:text="${user.phone != null ? user.phone : 'N/A'}">Phone</td>-->
+<!--            <td th:text="${user.department != null ? user.department : 'N/A'}">Department</td>-->
+<!--        </tr>-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
