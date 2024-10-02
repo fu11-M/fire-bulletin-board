@@ -1,3 +1,5 @@
+package fire.pit.system.fire.bulletin.board.zones;
+
 public class ZoneDTO {
 
     private String zoneName;
