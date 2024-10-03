@@ -1,4 +1,4 @@
-# DPG AI Challenge - Fire Bulletin Board 시스템
+# DPG AI Challenge - 불구덩이 구원 시스템
 
 ### Fire Bulletin Board 시스템은 DPG AI 챌린지에서 개발된 빌딩 모니터링 대시보드로, 실시간 구역 정보 관리와 사용자 활동 추적을 목적으로 설계되었습니다. 특히 이 시스템은 **소방 안전을 보장**하고, **소방대원의 무리한 재진입을 방지**하는 기능을 강조하여, 긴급 상황에서 효율적인 대응을 지원합니다.
 
